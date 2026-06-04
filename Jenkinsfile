@@ -10,7 +10,7 @@ pipeline {
         AWS_CREDENTIAL = "aws_ecr_id"
     }
 
-    tool {
+    tools {
         nodejs "node18"
         }
 
