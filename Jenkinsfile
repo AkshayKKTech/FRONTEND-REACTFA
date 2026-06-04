@@ -23,7 +23,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo "testing the code"
-                sh "npm test"
+                sh "CI=true npm test"
             }
         }
         stage('Build') {
