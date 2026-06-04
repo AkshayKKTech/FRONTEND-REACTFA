@@ -4,7 +4,7 @@ pipeline {
     environment {
         REGISTRY = "790552738405.dkr.ecr.eu-north-1.amazonaws.com"
         ECR_REPO_NAME = "cluster1/repo1"
-        IMAGE_NAME = "FRONTEND"
+        IMAGE_NAME = "frontend"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         AWS_REGION = "eu-north-1"
         AWS_CREDENTIAL = "aws_ecr_id"
