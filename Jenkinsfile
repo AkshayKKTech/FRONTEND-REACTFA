@@ -20,21 +20,25 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Install dependencies') {
+            steps {
+                echo "Installing node.js dependencies"
+                sh "npm ci"
+                }
+            }
+        stage('Build') {
+            steps {
+                echo "Building the code"
+                sh "npm run build"
+            }
+        }
         stage('Test') {
             steps {
                 echo "testing the code"
                 sh "CI=true npm test"
             }
         }
-        stage('Build') {
-            steps {
-                echo "Installing node.js dependencies"
-                sh "npm ci"
 
-                echo "Building the code"
-                sh "npm run build"
-            }
-        }
         stage('Docker image build') {
             steps {
                 echo "Building image for docker"
