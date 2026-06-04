@@ -12,7 +12,7 @@ pipeline {
 
     tools {
         nodejs "node18"
-        }
+    }
 
     stages {
         stage('checkout scm') {
@@ -20,12 +20,13 @@ pipeline {
                 checkout scm
             }
         }
+
         stage('Install dependencies') {
             steps {
                 echo "Installing node.js dependencies"
                 sh "npm install"
-                }
             }
+        }
 
         stage('Test') {
             steps {
@@ -33,35 +34,37 @@ pipeline {
                 sh "CI=true npm test"
             }
         }
+
         stage('Build') {
             steps {
                 echo "Building the code"
                 sh "npm run build"
             }
         }
+
         stage('Docker image build') {
             steps {
                 echo "Building image for docker"
                 sh "docker build -t ${REGISTRY}/${ECR_REPO_NAME}/${IMAGE_NAME}:${IMAGE_TAG} ."
             }
         }
-        stage('Docker image push') {
-            steps {
-                   withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding', 
-                        credentials:"${AWS_CREDENTIAL}, 
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID', 
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                    ]]) {
-                    echo "Logging to ecr"
-                    sh "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${REGISTRY}"
 
-                    echo "pushing to ecr"
-                    sh "docker push ${REGISTRY}/${ECR_REPO_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
-                }
+        stage('Docker image push') {
+            environment {
+                // Jenkins automatically extracts Access Key and Secret Key into the environment
+                AWS_TOKENS = credentials("${AWS_CREDENTIAL}")
+            }
+            steps {
+                echo "Logging to ecr"
+                // The AWS CLI automatically discovers AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment
+                sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${REGISTRY}"
+
+                echo "pushing to ecr"
+                sh "docker push ${REGISTRY}/${ECR_REPO_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
     }
+
     post {
         success {
             echo "Building the image successfully completed, ${IMAGE_NAME}/${IMAGE_TAG}"
