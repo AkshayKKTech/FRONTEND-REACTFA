@@ -45,7 +45,7 @@ pipeline {
         stage('Docker image build') {
             steps {
                 echo "Building image for docker"
-                sh "docker build -t ${REGISTRY}/${ECR_REPO_NAME}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                sh "docker build -t ${REGISTRY}/${ECR_REPO_NAME}:${IMAGE_TAG} ."
             }
         }
 
@@ -60,7 +60,7 @@ pipeline {
                 sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${REGISTRY}"
 
                 echo "pushing to ecr"
-                sh "docker push ${REGISTRY}/${ECR_REPO_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
+                sh "docker push ${REGISTRY}/${ECR_REPO_NAME}:${IMAGE_TAG}"
             }
         }
     }
