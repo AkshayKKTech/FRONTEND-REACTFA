@@ -23,10 +23,10 @@ pipeline {
         stage('Install dependencies') {
             steps {
                 echo "Installing node.js dependencies"
-                sh "npm ci"
+                sh "npm install"
                 }
             }
-            
+
         stage('Test') {
             steps {
                 echo "testing the code"
