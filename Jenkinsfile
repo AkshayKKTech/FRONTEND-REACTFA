@@ -47,9 +47,9 @@ pipeline {
         }
         stage('Docker image push') {
             steps {
-                withAWS(credentials: "${AWS_CREDENTIAL}", region: "${AWS_REGION}") {
+                withCredentials([usernamePassword(credentialsId: "${AWS_CREDENTIAL}", usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     echo "Logging to ecr"
-                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${REGISTRY}"
+                    sh "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${REGISTRY}
 
                     echo "pushing to ecr"
                     sh "docker push ${REGISTRY}/${ECR_REPO_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
