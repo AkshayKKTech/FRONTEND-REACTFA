@@ -10,6 +10,10 @@ pipeline {
         AWS_CREDENTIAL = "aws_ecr_id"
     }
 
+    tool {
+        nodejs "node18"
+        }
+
     stages {
         stage('checkout scm') {
             steps {
