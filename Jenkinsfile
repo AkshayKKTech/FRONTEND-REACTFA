@@ -2,75 +2,75 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = "790552738405.dkr.ecr.eu-north-1.amazonaws.com"
-        ECR_REPO_NAME = "cluster1/repo1"
+        // Changed to match what you use in your stages
+        ACR_REGISTRY = "repo1.azurecr.io" 
         IMAGE_NAME = "frontend"
-        IMAGE_TAG = "${env.BUILD_NUMBER}"
-        AWS_REGION = "eu-north-1"
-        AWS_CREDENTIAL = "aws_ecr_id"
+        IMAGE_TAG = "${BUILD_NUMBER}"
+        REGION = "East US"
+        ACR_CREDENTIAL_ID = "acr_credential_id"
     }
 
     tools {
-        nodejs "node18"
+        // Ensure this exact name matches your Global Tool Configuration
+        nodejs "node18" 
     }
 
     stages {
-        stage('checkout scm') {
+        stage('Checkout SCM') {
             steps {
                 checkout scm
             }
+        } // <-- Added missing closing brace here
+
+        stage('Installing Dependencies') {
+            steps {
+                echo "Installing dependencies..."
+                sh "npm install"
+            }
         }
 
-        stage('Install dependencies') {
+        stage('Build React App') {
             steps {
-                echo "Installing node.js dependencies"
-                sh "npm install"
+                echo "Compiling code..."
+                // Fixed command to actually build your production React bundle
+                sh "npm run build" 
             }
         }
 
         stage('Test') {
             steps {
-                echo "testing the code"
+                echo "Testing the code..."
                 sh "CI=true npm test"
             }
         }
 
-        stage('Build') {
+        stage('Docker Login to ACR') {
             steps {
-                echo "Building the code"
-                sh "npm run build"
+                echo "Logging into Azure Container Registry using Service Principal..."
+                withCredentials([usernamePassword(credentialsId: env.ACR_CREDENTIAL_ID, 
+                                                 usernameVariable: 'SPN_CLIENT_ID', 
+                                                 passwordVariable: 'SPN_CLIENT_SECRET')]) {
+                    
+                    // Uses the matching environment variable name env.ACR_REGISTRY
+                    sh "echo '${SPN_CLIENT_SECRET}' | docker login ${env.ACR_REGISTRY} -u ${env.SPN_CLIENT_ID} --password-stdin"
+                }
             }
         }
 
-        stage('Docker image build') {
+        stage('Build Docker Image') {
             steps {
-                echo "Building image for docker"
-                sh "docker build -t ${REGISTRY}/${ECR_REPO_NAME}:${IMAGE_TAG} ."
+                echo "Building docker image..."
+                // Fixed unclosed string, syntax errors, and switched to buildx
+                sh "docker buildx build -t ${env.ACR_REGISTRY}/${env.IMAGE_NAME}:${env.IMAGE_TAG} -t ${env.ACR_REGISTRY}/${env.IMAGE_NAME}:latest ."
             }
         }
 
-        stage('Docker image push') {
-            environment {
-                // Jenkins automatically extracts Access Key and Secret Key into the environment
-                AWS_TOKENS = credentials("${AWS_CREDENTIAL}")
-            }
+        stage('Push to ACR') {
             steps {
-                echo "Logging to ecr"
-                // The AWS CLI automatically discovers AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment
-                sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${REGISTRY}"
-
-                echo "pushing to ecr"
-                sh "docker push ${REGISTRY}/${ECR_REPO_NAME}:${IMAGE_TAG}"
+                echo "Pushing images to registry..."
+                sh "docker push ${env.ACR_REGISTRY}/${env.IMAGE_NAME}:${env.IMAGE_TAG}"
+                sh "docker push ${env.ACR_REGISTRY}/${env.IMAGE_NAME}:latest"
             }
-        }
-    }
-
-    post {
-        success {
-            echo "Building the image successfully completed, ${IMAGE_NAME}/${IMAGE_TAG}"
-        }
-        failure {
-            echo "Pipeline Failed. Review build logs above to troubleshoot"
         }
     }
 }
