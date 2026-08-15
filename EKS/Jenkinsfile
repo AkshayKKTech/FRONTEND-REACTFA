@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = "979538921440.dkr.ecr.eu-north-1.amazonaws.com"
+        REGISTRY = "979538921440.dkr.ecr.us-east-1.amazonaws.com/namespace1/repo1"
         ECR_REPO_NAME = "namespace/repo1"
         IMAGE_NAME = "frontend"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
