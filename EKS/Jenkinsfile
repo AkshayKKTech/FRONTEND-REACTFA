@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = "790552738405.dkr.ecr.eu-north-1.amazonaws.com"
-        ECR_REPO_NAME = "cluster1/repo1"
+        REGISTRY = "979538921440.dkr.ecr.eu-north-1.amazonaws.com"
+        ECR_REPO_NAME = "namespace/repo1"
         IMAGE_NAME = "frontend"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
-        AWS_REGION = "eu-north-1"
+        AWS_REGION = "us-east-1"
         AWS_CREDENTIAL = "aws_ecr_id"
     }
 
@@ -71,6 +71,10 @@ pipeline {
         }
         failure {
             echo "Pipeline Failed. Review build logs above to troubleshoot"
+        }
+        cleanup {
+            echo 'Cleaning up workspace...'
+            cleanWs()
         }
     }
 }
