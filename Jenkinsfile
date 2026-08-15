@@ -71,6 +71,7 @@ pipeline {
                 sh "docker push ${env.ACR_REGISTRY}/${env.IMAGE_NAME}:latest"
             }
         }
+    }
         /*
         stage('Build docker and pushes to local') {
             steps {
@@ -79,12 +80,11 @@ pipeline {
                 }
             }*/
     post {
-        successfull {
+        success {
             echo 'The entire pipeline completed successfully! 🎉'
         }
         cleanup {
             cleanWs()
         }
-    }
     }
 }
