@@ -1,15 +1,14 @@
 pipeline {
     agent any
 
-/*    environment {
+    environment {
         // Changed to match what you use in your stages
-        ACR_REGISTRY = "repo1.azurecr.io" 
+        ACR_REGISTRY = "namespace1/repo1"
         IMAGE_NAME = "frontend"
         IMAGE_TAG = "${BUILD_NUMBER}"
-        REGION = "East US"
+        REGION = "us-east-1"
         ACR_CREDENTIAL_ID = "acr_credential_id"
     }
-*/
     tools {
         // Ensure this exact name matches your Global Tool Configuration
         nodejs "node18" 
@@ -44,7 +43,7 @@ pipeline {
             }
         }
 
-/*        stage('Docker Login to ACR') {
+        stage('Docker Login to ACR') {
             steps {
                 echo "Logging into Azure Container Registry using Service Principal..."
                 withCredentials([usernamePassword(credentialsId: env.ACR_CREDENTIAL_ID, 
@@ -71,12 +70,21 @@ pipeline {
                 sh "docker push ${env.ACR_REGISTRY}/${env.IMAGE_NAME}:${env.IMAGE_TAG}"
                 sh "docker push ${env.ACR_REGISTRY}/${env.IMAGE_NAME}:latest"
             }
-        } */
+        }
+        /*
         stage('Build docker and pushes to local') {
             steps {
                 echo " Building image"
                 sh "docker build -t frontend:latest ."
                 }
-            }
+            }*/
+    post {
+        successfull {
+            echo 'The entire pipeline completed successfully! 🎉'
+        }
+        cleanup {
+            cleanWs()
+        }
+    }
     }
 }
