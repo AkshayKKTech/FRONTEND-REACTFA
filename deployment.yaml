@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-image-updater
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: image-updater
+  template:
+    metadata:
+      labels:
+        app: image-updater
+    spec:
+      containers:
+        - image: gcr.io/google-samples/gb-frontend:v5
+          name: guestbook-ui
+          ports:
+            - containerPort: 80
