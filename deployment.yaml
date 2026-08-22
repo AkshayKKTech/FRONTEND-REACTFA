@@ -14,7 +14,7 @@ spec:
         app: image-updater
     spec:
       containers:
-        - image: gcr.io/google-samples/gb-frontend:v5
+        - image: akshaykkdocker623/frontend:v1.1
           name: guestbook-ui
           ports:
             - containerPort: 80
