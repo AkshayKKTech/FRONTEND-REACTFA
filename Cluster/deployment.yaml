@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - image: akshaykkdocker623/frontend:v1.1
-          name: guestbook-ui
+          name: image-updater
           ports:
             - containerPort: 80
