@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies and test
         run: |
-          npm ci
+          npm install
           CI=true npm test
           
   
