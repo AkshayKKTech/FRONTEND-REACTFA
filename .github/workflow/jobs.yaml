@@ -1,5 +1,4 @@
-name: reactjs build,test and deploy docker image
-
+name: checkout-test-build
 on:
   push:
     branches:
@@ -11,12 +10,17 @@ jobs:
     steps: 
       - name: checkout
         uses: actions/checkout@v3
-      - name: test
-        run: CI=true npm test
-      - name: build
+      - name: setup node js
+        uses: actions/node@v4
+        with:
+          node-version: '18'
+          cache: npm
+
+      - name: Install dependencies and test
         run: |
-          npm run build
-          echo "Completed successfully"
+          npm ci
+          CI=true npm test
+          
   
  # docker login and push:
  #   runs-on: self-hosted
