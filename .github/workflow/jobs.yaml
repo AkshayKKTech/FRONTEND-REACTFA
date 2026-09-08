@@ -1,4 +1,4 @@
-name: reactjs build,test and deploy docker image
+name: reactjs build,test and deploy docker
 
 on:
   push:
