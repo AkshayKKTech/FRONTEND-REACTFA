@@ -4,14 +4,27 @@ function App() {
   const [orderId, setOrderId] = useState('');
   const [status, setStatus] = useState(null);
 
-  // Simulating a backend API call to track an underwriting order
-  const handleTrackOrder = (e) => {
+ // Updated handler calling real Spring Boot API
+  const handleTrackOrder = async (e) => {
     e.preventDefault();
     if (!orderId.trim()) {
       setStatus('Please enter a valid Order ID.');
       return;
     }
-    setStatus(`Checking records... Order ID #${orderId} is currently UNDER REVIEW by the Bangalore Operations Team.`);
+
+    setStatus('Checking database records...');
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/orders/track/${encodeURIComponent(orderId)}`);
+      if (!response.ok) {
+        throw new Error('Server returned an error');
+      }
+      const data = await response.json();
+      setStatus(data.message);
+    } catch (error) {
+      console.error('API Error:', error);
+      setStatus('Unable to connect to the Title Insurance database service.');
+    }
   };
 
   return (
