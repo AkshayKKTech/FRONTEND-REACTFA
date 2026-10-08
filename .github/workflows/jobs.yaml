@@ -37,7 +37,7 @@ jobs:
   
   docker_login_and_push:
     needs: build_and_test
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
     steps:
       - name: checkout scm
         uses: actions/checkout@v3
