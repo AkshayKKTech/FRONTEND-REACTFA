@@ -7,7 +7,7 @@ on:
   workflow_dispatch: 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: repo1
+  ECR_REPOSITORY: namespace1/repo1
 
 jobs:
   build_and_test:
