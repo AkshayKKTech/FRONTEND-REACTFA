@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch: 
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: repo1
@@ -27,6 +28,7 @@ jobs:
           
   
   docker_login_and_push:
+    needs: build_and_test
     runs-on: self-hosted
     steps:
       - name: checkout scm
