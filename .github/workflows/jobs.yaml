@@ -25,6 +25,8 @@ jobs:
           npm install
           CI=true npm test
           npm run build
+          pwd
+          ls -la
           
   
   docker_login_and_push:
