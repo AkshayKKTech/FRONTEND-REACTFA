@@ -10,7 +10,7 @@ env:
 
 jobs:
   build_and_test:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps: 
       - name: checkout
         uses: actions/checkout@v3
@@ -31,7 +31,7 @@ jobs:
   
   docker_login_and_push:
     needs: build_and_test
-    runs-on: self-hosted
+    runs-on: ubuntu:latest
     steps:
       - name: checkout scm
         uses: actions/checkout@v3
