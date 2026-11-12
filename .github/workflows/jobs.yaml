@@ -65,8 +65,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ steps.login-ecr.outputs.registry }}/namespace1/repo1:${{ github.sha }}
-            ${{ steps.login-ecr.outputs.registry }}/namespace1/repo1:latest        
+            ${{ steps.login-ecr.outputs.registry }}/namespace1/repo1:frontend-v1     
         
 
 
