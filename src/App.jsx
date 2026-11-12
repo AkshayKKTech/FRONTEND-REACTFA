@@ -15,7 +15,7 @@ function App() {
     setStatus('Checking database records...');
 
     try {
-      const response = await fetch(`http://localhost:8080/api/orders/track/${encodeURIComponent(orderId)}`);
+      const response = await fetch(`/api/orders/track/${encodeURIComponent(orderId)}`);
       if (!response.ok) {
         throw new Error('Server returned an error');
       }
